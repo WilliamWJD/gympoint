@@ -1,5 +1,8 @@
 import express from "express";
 
+import "dotenv/config";
+import "./database";
+
 class App {
   constructor() {
     this.server = express();

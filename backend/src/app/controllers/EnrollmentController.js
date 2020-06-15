@@ -1,4 +1,4 @@
-import { add, parseISO } from "date-fns";
+import { add, parseISO, format } from "date-fns";
 import * as Yup from "yup";
 
 import Enrollment from "../models/Enrollment";
@@ -46,8 +46,14 @@ class EnrollmentController {
 
     await Mail.sendMail({
       to: `${name} <${email}>`,
-      subject: "Inscrição academia",
-      text: `Parabéns, você está inscrito no plano: ${plan.title}`,
+      subject: "Bem-Vindo (a) ao Gympoint",
+      template: "welcome",
+      context: {
+        name,
+        title: plan.title,
+        start_date: format(enrollment.start_date, "dd-MM-yyyy"),
+        end_date: format(enrollment.end_date, "dd-MM-yyyy"),
+      },
     });
 
     return res.json(enrollment);

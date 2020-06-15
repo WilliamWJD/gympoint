@@ -5,6 +5,7 @@ import UserController from "./app/controllers/UserController";
 import SessionController from "./app/controllers/SessionController";
 import StudentsController from "./app/controllers/StudentsController";
 import PlansController from "./app/controllers/PlansController";
+import EnrollmentController from "./app/controllers/EnrollmentController";
 
 const routes = Router();
 
@@ -21,5 +22,7 @@ routes.put("/plans/:plan_id", PlansController.update);
 routes.delete("/plans/:plan_id", PlansController.delete);
 routes.get("/plans", PlansController.index);
 routes.get("/plans/:plan_id", PlansController.show);
+
+routes.post("/enrollments", EnrollmentController.store);
 
 export default routes;

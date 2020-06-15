@@ -24,6 +24,7 @@ routes.get("/plans", PlansController.index);
 routes.get("/plans/:plan_id", PlansController.show);
 
 routes.post("/enrollments", EnrollmentController.store);
+routes.put("/enrollments/:enrollment_id", EnrollmentController.update);
 routes.get("/enrollments", EnrollmentController.index);
 routes.get("/enrollments/:enrollment_id", EnrollmentController.show);
 

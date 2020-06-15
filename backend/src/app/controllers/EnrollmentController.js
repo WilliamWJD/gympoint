@@ -105,6 +105,51 @@ class EnrollmentController {
 
     return res.json(enrollment);
   }
+
+  async update(req, res) {
+    const Schema = Yup.object().shape({
+      student_id: Yup.number().required(),
+      plan_id: Yup.number().required(),
+      start_date: Yup.date().required(),
+    });
+
+    if (!(await Schema.isValid(req.body))) {
+      return res.status(401).json({ errors: "Schema is invalid" });
+    }
+
+    const { enrollment_id } = req.params;
+
+    const enrollment = await Enrollment.findByPk(enrollment_id);
+
+    if (!enrollment) {
+      return res.status(401).json({ errors: "Enrollment not found" });
+    }
+
+    const { student_id, plan_id, start_date } = req.body;
+
+    // RECUPERA INFORMAÇÕES DO PLANO SELECIONADO
+    const plan = await Plan.findByPk(plan_id);
+
+    if (!plan) {
+      return res.status(401).json({ errors: "Plan not found" });
+    }
+
+    // CALCULA A DATA FINAL DA MATRICULA COM BASE NO PLANO SELECIONADO
+    const end_date = add(parseISO(start_date), { months: plan.duration });
+
+    // CALCULA O VALOR TOTAL DO PLANO SELECIONADO
+    const priceTotal = plan.price * plan.duration;
+
+    await enrollment.update({
+      student_id,
+      plan_id,
+      start_date,
+      price: priceTotal,
+      end_date,
+    });
+
+    return res.json(enrollment);
+  }
 }
 
 export default new EnrollmentController();

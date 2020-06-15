@@ -8,6 +8,52 @@ import Student from "../models/Student";
 import Mail from "../../lib/Mail";
 
 class EnrollmentController {
+  async index(req, res) {
+    const enrollment = await Enrollment.findAll({
+      include: [
+        {
+          model: Student,
+          as: "Student",
+          attributes: ["id", "name", "idade", "peso", "altura"],
+        },
+        {
+          model: Plan,
+          as: "Plan",
+          attributes: ["id", "title", "duration", "price"],
+        },
+      ],
+    });
+    return res.json(enrollment);
+  }
+
+  async show(req, res) {
+    const { enrollment_id } = req.params;
+
+    const enrollment = await Enrollment.findOne({
+      where: {
+        id: enrollment_id,
+      },
+      include: [
+        {
+          model: Student,
+          as: "Student",
+          attributes: ["id", "name", "idade", "peso", "altura"],
+        },
+        {
+          model: Plan,
+          as: "Plan",
+          attributes: ["id", "title", "duration", "price"],
+        },
+      ],
+    });
+
+    if (!enrollment) {
+      return res.status(401).json({ error: "Enrollment not found" });
+    }
+
+    return res.json(enrollment);
+  }
+
   async store(req, res) {
     const Schema = Yup.object().shape({
       student_id: Yup.number().required(),
@@ -53,6 +99,7 @@ class EnrollmentController {
         title: plan.title,
         start_date: format(enrollment.start_date, "dd-MM-yyyy"),
         end_date: format(enrollment.end_date, "dd-MM-yyyy"),
+        price: enrollment.price,
       },
     });
 

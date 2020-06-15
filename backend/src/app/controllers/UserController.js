@@ -5,7 +5,7 @@ class UserController {
   async store(req, res) {
     const Schema = Yup.object().shape({
       name: Yup.string().required(),
-      email: Yup.string().required(),
+      email: Yup.string().required().email(),
       password: Yup.string().required(),
     });
 

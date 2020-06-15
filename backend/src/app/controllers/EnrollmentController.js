@@ -1,4 +1,4 @@
-import { add, parseISO, format } from "date-fns";
+import { add, parseISO } from "date-fns";
 import * as Yup from "yup";
 import Enrollment from "../models/Enrollment";
 import Plan from "../models/Plan";
@@ -17,6 +17,17 @@ class EnrollmentController {
 
     const { student_id, plan_id, start_date } = req.body;
 
+    // VERIFICA SE O ALUNO JÁ SE ENCONTRA MATRICULADO EM UM PLANO
+    const checkStudentEnrollment = await Enrollment.findOne({
+      where: { student_id },
+    });
+
+    if (checkStudentEnrollment) {
+      return res
+        .status(401)
+        .json({ errors: "The student already has an active enrollment" });
+    }
+
     // RECUPERA INFORMAÇÕES DO PLANO SELECIONADO
     const plan = await Plan.findByPk(plan_id);
 
@@ -26,9 +37,8 @@ class EnrollmentController {
 
     // CALCULA A DATA FINAL DA MATRICULA COM BASE NO PLANO SELECIONADO
     const end_date = add(parseISO(start_date), { months: plan.duration });
-    const formattedEndDate = format(end_date, "yyyy-MM-dd");
 
-    // CALCULA O VALOR TOTAL DO PLANO
+    // CALCULA O VALOR TOTAL DO PLANO SELECIONADO
     const priceTotal = plan.price * plan.duration;
 
     const enrollment = await Enrollment.create({
@@ -36,7 +46,7 @@ class EnrollmentController {
       plan_id,
       start_date,
       price: priceTotal,
-      end_date: formattedEndDate,
+      end_date,
     });
 
     return res.json(enrollment);

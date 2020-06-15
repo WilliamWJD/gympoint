@@ -1,7 +1,11 @@
 import { add, parseISO } from "date-fns";
 import * as Yup from "yup";
+
 import Enrollment from "../models/Enrollment";
 import Plan from "../models/Plan";
+import Student from "../models/Student";
+
+import Mail from "../../lib/Mail";
 
 class EnrollmentController {
   async store(req, res) {
@@ -16,17 +20,6 @@ class EnrollmentController {
     }
 
     const { student_id, plan_id, start_date } = req.body;
-
-    // VERIFICA SE O ALUNO JÁ SE ENCONTRA MATRICULADO EM UM PLANO
-    const checkStudentEnrollment = await Enrollment.findOne({
-      where: { student_id },
-    });
-
-    if (checkStudentEnrollment) {
-      return res
-        .status(401)
-        .json({ errors: "The student already has an active enrollment" });
-    }
 
     // RECUPERA INFORMAÇÕES DO PLANO SELECIONADO
     const plan = await Plan.findByPk(plan_id);
@@ -47,6 +40,14 @@ class EnrollmentController {
       start_date,
       price: priceTotal,
       end_date,
+    });
+
+    const { name, email } = await Student.findByPk(student_id);
+
+    await Mail.sendMail({
+      to: `${name} <${email}>`,
+      subject: "Inscrição academia",
+      text: `Parabéns, você está inscrito no plano: ${plan.title}`,
     });
 
     return res.json(enrollment);

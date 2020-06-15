@@ -28,10 +28,14 @@ class EnrollmentController {
     const end_date = add(parseISO(start_date), { months: plan.duration });
     const formattedEndDate = format(end_date, "yyyy-MM-dd");
 
+    // CALCULA O VALOR TOTAL DO PLANO
+    const priceTotal = plan.price * plan.duration;
+
     const enrollment = await Enrollment.create({
       student_id,
       plan_id,
       start_date,
+      price: priceTotal,
       end_date: formattedEndDate,
     });
 

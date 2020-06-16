@@ -3,6 +3,25 @@ import HelpOrder from "../models/HelpOrder";
 import Student from "../models/Student";
 
 class HelpOrderController {
+  async index(req, res) {
+    const { id } = req.params;
+
+    // VERIFICA SE O ALUNO EXISTE NO BANCO
+    const checkStudent = await Student.findByPk(id);
+
+    if (!checkStudent) {
+      return res.status(401).json({ errors: "Student not found" });
+    }
+
+    const help = await HelpOrder.findAll({
+      where: {
+        student_id: id,
+      },
+    });
+
+    return res.json(help);
+  }
+
   async store(req, res) {
     const Schema = Yup.object().shape({
       question: Yup.string().required(),

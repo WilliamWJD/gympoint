@@ -15,6 +15,14 @@ routes.post("/sessions", SessionController.store);
 
 routes.post("/users", UserController.store);
 
+routes.post("/students/:id/checkins", CheckinController.store);
+routes.get("/students/:id/checkins", CheckinController.index);
+
+routes.post("/students/:id/help-orders", HelpOrderController.store);
+routes.get("/students/:id/help-orders", HelpOrderController.index);
+
+// ------- ROTAS AUTENTICADAS -------
+
 routes.use(authMiddleware);
 
 routes.post("/students", StudentsController.store);
@@ -29,10 +37,5 @@ routes.post("/enrollments", EnrollmentController.store);
 routes.put("/enrollments/:enrollment_id", EnrollmentController.update);
 routes.get("/enrollments", EnrollmentController.index);
 routes.get("/enrollments/:enrollment_id", EnrollmentController.show);
-
-routes.post("/students/:id/checkins", CheckinController.store);
-routes.get("/students/:id/checkins", CheckinController.index);
-
-routes.post("/students/:id/help-orders", HelpOrderController.store);
 
 export default routes;

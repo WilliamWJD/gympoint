@@ -7,6 +7,7 @@ import StudentsController from "./app/controllers/StudentsController";
 import PlansController from "./app/controllers/PlansController";
 import EnrollmentController from "./app/controllers/EnrollmentController";
 import CheckinController from "./app/controllers/CheckinController";
+import HelpOrderController from "./app/controllers/HelpOrderController";
 
 const routes = Router();
 
@@ -31,5 +32,7 @@ routes.get("/enrollments/:enrollment_id", EnrollmentController.show);
 
 routes.post("/students/:id/checkins", CheckinController.store);
 routes.get("/students/:id/checkins", CheckinController.index);
+
+routes.post("/students/:id/help-orders", HelpOrderController.store);
 
 export default routes;
